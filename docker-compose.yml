@@ -1,0 +1,60 @@
+version: '3.2'
+
+#networks:
+#  internal:
+
+#NGINX, PHP, MySQL
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx_container
+    ports:
+      - "80:80"
+    volumes:
+      - ./sites/word:/var/www/word
+      - ./config/nginx:/etc/nginx/conf.d
+      - ./data/logs:/var/log/nginx/
+    depends_on:
+      - php
+      - mysql
+#    networks:
+#      - internal
+  php:
+    build:
+      context: ./config/php
+      dockerfile: Dockerfile
+    container_name: php_container
+    volumes:
+      - ./sites:/var/www
+      - ./config/php/php.ini:/usr/local/etc/php/php.ini
+    ports:
+      - "9000:9000"
+#    networks:
+#      - internal
+
+
+  mysql:
+    container_name: 'mysql'
+    image: mysql:5.7
+    restart: always
+#    volumes:
+#      - ./data/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=example username
+      - MYSQL_PASSWORD=example password
+    ports:
+      - "3306:3306"
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - WORDPRESS_DB_HOST=mysql
+      - WORDPRESS_DB_USER=example username
+      - WORDPRESS_DB_PASSWORD=example password
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - ./sites/word:/var/www/html
