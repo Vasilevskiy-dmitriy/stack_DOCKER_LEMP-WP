@@ -30,4 +30,4 @@ sudo docker-compose up -d --build
 ```
 ## Access the site by URL.
 
-- Dev site URL: http://localhost:8080
+- Dev site URL: http://localhost
